@@ -7,34 +7,47 @@ func bfs(graph [][]int) {
 	var Aqueue, Fqueue []int
 	var bebef []bool
 	var buyR []int
-	var test bool = true
+	var test bool
+	var start int
 
-	Aqueue = make([]int, 0)
-	Fqueue = make([]int, 0)
 	bebef = make([]bool, len(graph))
 	buyR = make([]int, 0)
-	Aqueue = append(Aqueue, 0)
-	for len(Aqueue) > 0 {
-		for _, v := range Aqueue {
-			for _, a := range graph[v] {
-				if !bebef[a] {
-					Fqueue = append(Fqueue, a)
-					bebef[a] = true
-					if ruler {
-						buyR = append(buyR, a)
+
+main:
+	for {
+		Aqueue = make([]int, 0)
+		Fqueue = make([]int, 0)
+		Aqueue = append(Aqueue, start)
+		bebef[start] = true
+		ruler = false
+		for len(Aqueue) > 0 {
+			for _, v := range Aqueue {
+				if ruler {
+					buyR = append(buyR, v)
+				}
+				for _, a := range graph[v] {
+					if !bebef[a] {
+						Fqueue = append(Fqueue, a)
+						bebef[a] = true
 					}
 				}
 			}
+			Aqueue = Fqueue
+			Fqueue = make([]int, 0)
+			ruler = !ruler
 		}
-		Aqueue = Fqueue
-		Fqueue = make([]int, 0)
-		ruler = !ruler
-	}
-	for _, v := range bebef {
-		if !v {
-			test = false
-			break
+		test = true
+		for i, v := range bebef {
+			if !v {
+				test = false
+				if len(graph[i]) == 0 {
+					break main
+				}
+				start = i
+				continue main
+			}
 		}
+		break
 	}
 	if test {
 		fmt.Println("ANO")
@@ -54,6 +67,10 @@ func main() {
 		var N, M int
 		var graph [][]int
 		fmt.Scan(&N, &M)
+		if N == 1 {
+			fmt.Println("NE")
+			continue
+		}
 		graph = make([][]int, N)
 		for j := range graph {
 			graph[j] = make([]int, 0)
